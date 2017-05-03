@@ -1,0 +1,603 @@
+<html>
+<head>
+  <title> Sample Backbone Demo </title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <link href="bootstrap-3.2.0-dist/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
+  <style>
+  body {
+    font-family: sans-serif;
+    line-height: 120%;
+  }
+  img {
+     border: 1px solid #ddd;
+     border-radius: 4px;
+     box-shadow: 5px 5px 2px #888888;
+     padding: 5px;
+     width: 150px;
+   }
+   .inline-block {
+     display: inline-block;
+   }
+   .normal {
+      font-weight: normal;
+   }
+   .bold {
+        font-weight: bold;
+   }
+   .legend {
+     font-size:16px;
+   }
+   .prodHeader, .prodTitle, .prodName {
+     font-size:18px;
+   }
+   #next {
+     margin-left: 20px;
+   }
+   .green, .peach {
+       border: 3px solid #eee;
+       border-radius: 50%;
+       padding: 5px;
+       width: 50px;
+       height:50px;
+   }
+   .green:hover, .peach:hover {
+     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+   }
+   .green {
+     background-color:#8defd0;
+   }
+   .peach {
+     background-color:#ffe5d6;
+   }
+   img:hover {
+       box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+   }
+   form {
+       padding: 20px;
+   }
+   .spacer {
+       padding-right: 60px;
+   }
+   div > .btn.btn-primary {
+     margin-top: 40px;
+     margin-left: 120px;
+     width: 150px;
+   }
+   .align {
+     min-width: 30%;
+   }
+   .error {
+     font-weight: bold;
+     color: red;
+   }
+   a.activePage{
+     //color: green;
+   }
+  </style>
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/F6DFE4E2-335A-874F-913E-E84D78BEFBA9/main.js" charset="UTF-8"></script></head>
+<body>
+<p id="error" class="error"></p><br/>
+<div class="main">
+  <div class="container" id="container">
+
+  </div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.3.3/underscore-min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.0/backbone.localStorage-min.js" type="text/javascript"></script>
+
+<script type="text/template" id="header_template">
+	<div class="header row">
+  	<a href="#" class="col-sm-4 routelink" id="productLink" onclick="router.navigate('newOrder', {trigger: true});" >Home</a>
+    <a href="#" class="col-sm-4 routelink" id="shippingLink" onclick="router.navigate('view2', {trigger: true});">Shipping Details</a>
+    <a href="#" class="col-sm-4 routelink" id="purchaseReview" onclick="router.navigate('view3', {trigger: true});">Review Order</a>
+  </div>
+  <br/>
+</script>
+
+<script type="text/template" id="product_template">
+<div>
+ <div class="headerPlaceholder">
+ </div>
+  <!-- Add a product component with image of your choice -->
+  <div class="prodHeader normal" itemprop="name" data-auto="productTitle">
+    <div class="prodTitle bold">Crystal Sequin Dress</div>
+  </div>
+  <img id="peachdress" src="https://slimages.macysassets.com/is/image/MCY/products/9/optimized/3012689_fpx.tif"/>
+  <img id="greendress" src="https://slimages.macysassets.com/is/image/MCY/products/0/optimized/1960050_fpx.tif" hidden/>
+  <br/>
+  <br/>
+  <br/>
+
+  <div id="size-selection">
+  <fieldset>
+    <legend class="legend bold" id="sizeLeg" >Size: Small</legend>
+      <label for="small" >Small</label>
+      <input id="small" class="sizes" type="radio" name="sizes" value="2S" data-size="Small" checked/>
+      <br/>
+      <label for="medium" >Medium</label>
+      <input id="medium" class="medium" class="sizes" type="radio" name="sizes" data-size="Medium" value="3M"/>
+      <br/>
+      <label for="large" >Large</label>
+      <input  id="large" class="large"  class="sizes" type="radio" name="sizes" data-size="Large" value="4L"/>
+      <br/>
+      <input id="sizeDesc" value="Small" hidden/>
+   </fieldset>
+  </div>
+  <br/>
+  <br/>
+  <div id="color-selection" >
+  <fieldset>
+    <legend class="legend bold" id="colorLeg">Color Selected: Peach</legend>
+    <button id="greenbutton" class="green" data-color="Aqua"></button>
+    <button id="peachbutton" class="peach" data-color="Peach"></button>
+    <input id="colorDesc" hidden value="Peach"/>
+   </fieldset>
+  </div>
+  <br/>
+  <br/>
+  <div id="quantity-selection">
+    <fieldset>
+      <legend class="legend bold" id="qtyLeg">Quantity: 1</legend>
+      <select id="qty" required="required">
+        <option value="qty">QTY</option>
+        <option value="1" data-qty="1">1</option>
+        <option value="2" data-qty="2">2</option>
+        <option value="3" data-qty="3">3</option>
+        <option value="4" data-qty="4">4</option>
+        <option value="5" data-qty="5">5</option>
+        <option value="6" data-qty="6">6</option>
+      </select>
+      <input id="quantityDesc" value="1" hidden/>
+    </fieldset>
+  </div>
+
+  <button class="btn btn-primary" id="next"> Next </button>
+
+</div>
+<br/>
+</script>
+
+<script type="text/template" id="userdetails_template">
+<div id=shipaddress>
+<div class="headerPlaceholder">
+</div>
+  <div class="form-group">
+    <h2> Shipping Information </h2>
+    <div class="row">
+      <label for="fname" class="col-sm-4 align control-label" >First Name</label>
+      <input class="col-sm-4"  type="text" pattern="[A-Za-z]{1,30}" title="First name should only contain letters. e.g. John Doe" placeholder="First Name" required="required" name="firstname" id=fname autofocus/>
+    </div>
+    <div class="row">
+      <label for="lname"  class="col-sm-4 align control-label">Last Name</label>
+      <input type="text" class="col-sm-4" name="lastname" pattern="[A-Za-z]{1,30}" title="Last name should only contain letters. e.g. John Doe" placeholder="Last Name" required="required" id="lname" value=""/>
+    </div>
+    <div class="row">
+      <label for="addOne" class="col-sm-4 align control-label">AddressOne</label>
+      <input  class="col-sm-4" type="text" required="required" placeholder="Street Name/No" name="address1" id="addOne"/>
+    </div>
+    <div class="row">
+      <label for="addTwo" class="col-sm-4  align control-label">AddressTwo</label>
+      <input class="col-sm-4" type="text" placeholder="Apt No (optional)" name="address2" id="addTwo"/>
+    </div>
+    <div class="row">
+      <label for="city" class="col-sm-4 align control-label">City</label>
+      <input class="col-sm-4" type="text" name="city" id="city"/>
+    </div>
+    <div  class="row">
+      <label for="state" class="col-sm-4 align control-label">State</label>
+      <input class="col-sm-4" type="text" name="state" id="state"/>
+    </div>
+    <div  class="row">
+      <label for="zipcode" class="col-sm-4 align control-label">ZipCode</label>
+      <input class="col-sm-4" min="5" maxlength="5" type="number" name="zipcode" id="zipcode" placeholder="Enter only numbers" required/>
+    </div>
+    <div  class="row">
+      <button type="button"  class="btn btn-primary" id="complete">Finish</button>
+    </div>
+  </div>
+</div>
+<br/>
+<br/>
+</script>
+
+<script type="text/template" id="analyticsInfo_template">
+<div id=analyticsinfo>
+ <div class="headerPlaceholder">
+ </div>
+  <h3>Selected product:</h3>
+  <img src="<%= url %>"><br/><br/>
+ 	Desc: <%= desc %><br/>
+  Color: <%= color %><br/>
+  Quantity: <%= qty %><br/>
+  <br/>
+  <br/>
+  <h3>Will be shipped to :</h3>
+ 	FirstName: <%= fname %><br/>
+  LastName: <%= lname %><br/>
+  Address: <%= address %><br/>
+  City: <%= city %><br/>
+  State: <%= state %><br/>
+  Zipcode: <%= zipcode %><br/>
+</div>
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+    router = new myRouter();
+    Backbone.history.start();
+});
+
+ var Order = Backbone.Model.extend({
+    defaults:{
+        firstName: '',
+        lastName: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        state: '',
+        zipcode: '',
+        productDesc: 'Crystal Sequin Dress',
+        productId: 'D#7000',
+        quantity: '',
+        productcolor: '',
+        productsize: '',
+        thumbnail:'',
+        id: getOId()
+    },
+    initialize: function() {
+        console.log('New order has been created.');
+    }
+});
+
+var myRouter = Backbone.Router.extend({
+
+    order1: null,
+    container: null,
+    newOrder: null,
+    view2: null,
+    view3: null,
+
+    initialize: function() {
+        this.order1 = new Order({});// this.greeting = new Order();
+        this.container = new ContainerView({ el: $("#container"), model: this.order1 });
+        var qtySelected = $('#quantityDesc').val();
+        var thumbnailUrl = $("#peachdress").attr('src');
+        var color = $("#colorDesc").val();
+        var size = $("#sizeDesc").val();
+        this.order1.set('productcolor', color);
+        //this.order1.set('quantity', qtySelected);
+        this.order1.set('thumbnail', thumbnailUrl);
+        this.order1.set('productsize', size);
+        this.productRoute();
+        //router.navigate('newOrder', {trigger: true});
+    },
+
+    routes: {
+        //"": "productRoute",
+        "newOrder": "productRoute",
+        "view2": "shippingRoute",
+        "view3": "reviewRoute"
+    },
+
+    productRoute: function () {
+        if (this.newOrder == null) {
+            this.newOrder = new homeView({ model: this.order1 });
+        }
+        console.log("product details route called");
+        $('#container').empty();
+        this.container.myChildView = this.newOrder;
+        this.container.render();
+    },
+
+    shippingRoute: function () {
+        if (this.view2 == null) {
+            this.view2 = new View2({ model: this.order1 });
+        }
+				console.log("shipping details route called");
+        $('#container').empty();
+        this.container.myChildView = this.view2;
+        this.container.render();
+    },
+
+    reviewRoute: function () {
+        if (this.view3 == null) {
+            this.view3 = new View3({ model: this.order1 });
+        }
+        $('#container').empty();
+        console.log("review order route called");
+        this.container.myChildView = new View3({ model: this.order1 });
+        this.container.render();
+    }
+
+    // refreshView: function () {
+    //   var $old_Content = $("#container");
+    //   var len = $old_Content.length;
+    //   if(len != 0) {
+    //     var $new_Content = document.createElement("div");
+    //     $new_Content.setAttribute("id", "container");
+    //     $new_Content.setAttribute("class", "container");
+    //
+    //     $old_Content.replaceWith($new_Content);
+    //   } else {
+    //     console.log("");
+    //   }
+    // },
+});
+
+
+var homeView = Backbone.View.extend({
+
+    template: _.template($("#product_template").html()),
+    initialize: function() {
+        this.render();
+    },
+
+    render: function() {
+        //this.$el.html(this.model.get('Message') + " from the View 1");
+        this.$el.html(this.template);
+        return this;
+    }
+});
+
+var View2 = Backbone.View.extend({
+
+    template: _.template($("#userdetails_template").html()),
+    initialize: function() {
+        this.render();
+    },
+
+    render: function() {
+        this.$el.html(this.template);
+        return this;
+    }
+});
+
+var View3 = Backbone.View.extend({
+
+    template: _.template($("#analyticsInfo_template").html()),
+
+    initialize: function() {
+        this.render();
+    },
+
+    render: function() {
+      //product info
+      console.log(this.model);
+      var thumbnail = this.model.get("thumbnail");
+      var productDesc = this.model.get("productDesc");
+      var productcolor = this.model.get("productcolor");
+      var quantity = this.model.get("quantity");
+
+      //shipping info
+      var firstName = this.model.get("firstName");
+      var lastName = this.model.get("lastName");
+      var addr1 = this.model.get("addressOne");
+      var cityVal = this.model.get("city");
+      var stateVal = this.model.get("state");
+      var zip = this.model.get("zipcode");
+      this.$el.html(this.template(
+        {
+          url: (thumbnail || 'https://slimages.macysassets.com/is/image/MCY/products/9/optimized/3012689_fpx.tif'),
+          desc: productDesc,
+          color: (productcolor || 'Peach'),
+          qty: (quantity || 1),
+          fname: firstName,
+          lname: lastName,
+          address: addr1,
+          city: cityVal,
+          state: stateVal,
+          zipcode: zip
+        }
+      )
+      );
+        //this.$el.html(this.template);
+        return this;
+    }
+});
+
+var ContainerView = Backbone.View.extend({
+     myChildView: null,
+    displayHeader: function () {
+      //var headerV = new headerView();
+      markup = _.template($("#header_template").html());
+      var header = $('.routelink');
+      if(header.length == 0) {
+      	$(".headerPlaceholder").append(markup);
+      }
+    },
+    events: {
+    	//used keyup events for binding form field changes to model
+        "click #greenbutton, #peachbutton": "selectColor",
+        "click #next": "renderNextPage", //loads the next template for entering address
+        "change #qty": "selectQuantityDetails",
+        "change #small, #medium, #large": "changeSize",
+        "click #complete": "submitForm"
+    },
+    changeSize: function(e) {
+    	var sizeSelected = $(e.target).attr('data-size');
+  		$("#sizeLeg").text("Size: "+sizeSelected);
+      $("#sizeDesc").val(sizeSelected);
+      this.model.set('productsize', sizeSelected);
+    },
+    selectQuantityDetails: function(e) {
+    console.log("qty");
+      var qtySelected = this.$('#qty').val();
+  		$("#qtyLeg").text("Quantity: "+qtySelected);
+      $("#quantityDesc").val(qtySelected);
+      this.model.set('quantity', qtySelected);
+    },
+    selectColor: function(e) {
+    	var colorSelection = $(e.target).attr('data-color');
+      var thumbnailUrl='';
+      if(colorSelection == "Peach") {
+        $('#greendress').hide();
+        $('#peachdress').show();
+        thumbnailUrl = $("#peachdress").attr('src');
+      } else {
+        $('#peachdress').hide();
+        $('#greendress').show();
+        thumbnailUrl = $("#greendress").attr('src');
+      }
+      $("#colorLeg").text("Color Selected: "+colorSelection);
+      $("#colorDesc").val(colorSelection);
+      this.model.set('productcolor', colorSelection);
+      this.model.set('thumbnail', thumbnailUrl);
+    },
+    firstname: function(){
+        var newName = $('#fname').val();
+        this.model.set('firstName', newName);
+    },
+    lastname: function(){
+        var newName = $('#lname').val();
+        this.model.set('lastName', newName);
+    },
+    updateAddressOne: function(){
+        console.log('AddressOne updated.');
+        var newName = $('#addOne').val();
+        this.model.set('addressOne', newName);
+    },
+    updateAddressTwo: function(){
+        console.log('AddressTwo updated.');
+        var newName = $('#addTwo').val();
+        this.model.set('addressTwo', newName);
+    },
+    updateCity: function(){
+        console.log('city updated.');
+        var newName = $('#city').val();
+        this.model.set('city', newName);
+    },
+    updateState: function(){
+        console.log('state updated.');
+        var newName = $('#state').val();
+        this.model.set('state', newName);
+    },
+    updateZipCode: function(){
+        console.log('zipcode updated.');
+        var newName = $('#zipcode').val();
+        this.model.set('zipcode', newName);
+    },
+    afterSubmit: function () {
+        //var markup = _.template($('#analyticsInfo_template').html());
+        $('#container').empty();
+        router.navigate('view3', {trigger: true});
+    },
+    renderNextPage: function(){
+     if (this.validateDetails()) {
+        //this.render();
+        $('#container').empty();
+        router.navigate('view2', {trigger: true});
+        //this.displayHeader();
+     } else {
+        document.querySelector("#error").innerHTML = "First Name and Last Name are required Fields";
+     }
+    },
+    validateDetails: function () {
+      document.querySelector("#error").innerHTML = "";
+      var sizeSelected = document.querySelector("#sizeDesc");
+      var colorSelected = document.querySelector("#colorDesc");
+		  var isSizeValid = sizeSelected.checkValidity();
+      var isColorValid = colorSelected.checkValidity();
+      if (isSizeValid && isColorValid) {
+       return true;
+      } else {
+      	return false;
+      }
+		},
+    validateName: function () {
+      document.querySelector("#error").innerHTML = "";
+
+      var firstname = document.querySelector("#fname");
+      var  firstnamePattern = firstname.validity.patternMismatch;//checking for patternMismatch
+
+      var lastname = document.querySelector("#lname");
+      var  lastnamePattern = lastname.validity.patternMismatch;//checking for patternMismatch
+		  var checkfirstname = firstname.checkValidity();
+      var checklastname = lastname.checkValidity();
+      if (checkfirstname==true && checklastname==true && !lastnamePattern && !firstnamePattern) {
+       return true;
+      } else {
+      	return false;
+      }
+		},
+    updateOrderModel: function () {
+    	this.updateAddressOne();
+      this.firstname();
+      this.lastname();
+      this.updateAddressTwo();
+      this.updateCity();
+      this.updateState();
+      this.updateZipCode();
+    },
+    submitForm: function () {
+    	 this.updateOrderModel();
+       if(this.validateName() && this.validateAddress() && this.validateZip()) {
+          orderarray.add(this.model);
+          localStorage.setItem('orderid',this.model.id);
+          var jsonCollection = this.model.toJSON();
+          var key = "orderID." + this.model.id;
+          localStorage.setItem(key,jsonCollection);
+          console.log(JSON.stringify(orderarray));
+          this.afterSubmit();
+          //this.displayHeader();
+       } else {
+       		if(!this.validateName()) {
+       		document.querySelector("#error").innerHTML = "FirstName and LastName are required fields";
+          } else if(!this.validateAddress()) {
+       		document.querySelector("#error").innerHTML = "Address is a required field";
+          } else {
+       		document.querySelector("#error").innerHTML = "Zipcode is a required field. Please enter a valid zipcode of 5 characters.";
+          }
+       }
+    },
+    validateZip:function(){
+    document.querySelector("#error").innerHTML = "";
+      var zip = document.querySelector("#zipcode");
+		  var zipvalid = zip.checkValidity();
+      var zipEntryLen = zip.validity.rangeUnderflow; //checking for minimum length
+      if (zipvalid && !zipEntryLen) {
+      	//alert(true);
+       return true;
+      } else {
+      	return false;
+      }
+    },
+    validateAddress: function () {
+    	document.querySelector("#error").innerHTML = "";
+      var addressOne = document.querySelector("#addOne");
+		  var isAddressValid = addressOne.checkValidity();
+      if (isAddressValid) {
+       return true;
+      } else {
+      	return false;
+      }
+		},
+     render: function() {
+        //this.refreshView();
+        this.$el.append(this.myChildView.$el);
+        this.displayHeader();
+        return this;
+    }
+});
+
+var Orders = Backbone.Collection.extend({
+    model: Order
+});
+
+function getOId () {
+var id;
+ if(localStorage.getItem('orderid') === null) {
+ 	id = 1;
+  localStorage.setItem('orderid',id);
+ } else {
+ 	id = parseInt(localStorage.getItem('orderid'));
+  id++;
+ }
+ return id;
+}
+
+var orderarray = new Orders();
+</script>
+</body>
+</html>
